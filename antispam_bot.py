@@ -1,22 +1,30 @@
-def is_spam(message_text):
-    reklama_sozlar = ["reklama", "https://", "@", "obuna", "kanalga qo‘shiling", "promo", "skidka"]
-    for soz in reklama_sozlar:
-        if soz in message_text.lower():
-            return True
-    return False
+import re
+from telebot.types import Message
 
-def handle_new_message(bot, message):
-    # Agar foydalanuvchi admin bo‘lsa — hech nima qilmaydi
+# Reklama so‘zlari va havolalar
+REKLAMA_KALITLARI = [
+    "https://", "http://", "t.me/", "telegram.me/", "@",  # havolalar
+    "obuna", "kanalga", "kanalimizga", "reklama", "follow", "subscribe"
+]
+
+def is_spam(text):
+    text = text.lower()
+    return any(kalit in text for kalit in REKLAMA_KALITLARI)
+
+def handle_new_message(bot, message: Message):
+    # Faqat oddiy foydalanuvchilardan kelgan xabarlarni tekshiramiz
+    if message.chat.type in ['group', 'supergroup'] and not message.from_user.is_bot:
+        if not message.from_user.id in get_admin_ids(bot, message.chat.id):
+            if is_spam(message.text or ""):
+                try:
+                    bot.delete_message(message.chat.id, message.message_id)
+                    print(f"[INFO] Reklama o‘chirildi: {message.text}")
+                except Exception as e:
+                    print(f"[XATO] Xabarni o‘chirishda muammo: {e}")
+
+def get_admin_ids(bot, chat_id):
     try:
-        chat_member = bot.get_chat_member(message.chat.id, message.from_user.id)
-        if chat_member.status in ['administrator', 'creator']:
-            return
-    except Exception as e:
-        print("Admin tekshiruvda xatolik:", e)
-        return
-
-    if is_spam(message.text):
-        try:
-            bot.delete_message(message.chat.id, message.message_id)
-        except Exception as e:
-            print("Xabarni o‘chirishda xatolik:", e)
+        admins = bot.get_chat_administrators(chat_id)
+        return [admin.user.id for admin in admins]
+    except:
+        return []
