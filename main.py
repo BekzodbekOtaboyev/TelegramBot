@@ -45,9 +45,12 @@ def send_welcome(message):
     # Xabar yuborish
     bot.send_message(
         chat_id,
-        "🤖 *Assalamu alaykum!*\n\nReklama tozalovchi bot aktiv ishlamoqda.\nUni guruhga qo‘shing va *admin* qiling!\n\nAgar bot ishlamay qolsa @uzbek_developer008 ga murojat qiling! ",
-        reply_markup=markup,
-        parse_mode='Markdown'
+    "🤖 *Assalamu alaykum!*\n\n"
+    "Reklama tozalovchi bot aktiv ishlamoqda.📈✅\n"
+    "Uni guruhga qo‘shing va *admin* qiling!\n\n"
+    "Agar botda nozoliklar bo'lsa, *@uzbek_developer008* ga murojaat qiling!",
+    reply_markup=markup,
+    parse_mode='Markdown'
     )
 
 # Reklama aniqlash va o'chirish
