@@ -45,7 +45,7 @@ def send_welcome(message):
     # Xabar yuborish
     bot.send_message(
         chat_id,
-        "🤖 *Assalamu alaykum!*\n\nReklama tozalovchi bot aktiv ishlamoqda.\nUni guruhga qo‘shing va *admin* qiling!",
+        "🤖 *Assalamu alaykum!*\n\nReklama tozalovchi bot aktiv ishlamoqda.\nUni guruhga qo‘shing va *admin* qiling!\n\nAgar bot ishlamay qolsa @uzbek_developer008 ga murojat qiling! ",
         reply_markup=markup,
         parse_mode='Markdown'
     )
@@ -54,11 +54,15 @@ def send_welcome(message):
 @bot.message_handler(content_types=['text'])
 def delete_ads(message):
     try:
+        # Anonim foydalanuvchini aniqlash (from_user yo'q bo'lishi mumkin)
+        if not message.from_user or message.from_user.is_bot:
+            return
+
         # Adminlar ro'yxati
         admins = bot.get_chat_administrators(message.chat.id)
         admin_ids = [admin.user.id for admin in admins]
 
-        # Faqat oddiy foydalanuvchi va reklama yuborgan bo‘lsa
+        # Faqat oddiy foydalanuvchi va link bo'lsa
         if message.from_user.id not in admin_ids and re.search(LINK_REGEX, message.text, re.IGNORECASE):
             bot.delete_message(message.chat.id, message.message_id)
 
