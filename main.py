@@ -55,42 +55,49 @@ def send_welcome(message):
 
 # Reklama aniqlash va o'chirish
 @bot.message_handler(content_types=['text'])
+@bot.message_handler(content_types=['text'])
 def delete_ads(message):
     try:
-        # Anonim foydalanuvchini aniqlash (from_user yo'q bo'lishi mumkin)
-        if not message.from_user or message.from_user.is_bot:
+        # Agar anonim yoki noma'lum foydalanuvchi bo‘lsa — tashlab ketamiz
+        if not message.from_user:
             return
 
-        # Adminlar ro'yxati
+        # Guruhdagi adminlarni olish
         admins = bot.get_chat_administrators(message.chat.id)
         admin_ids = [admin.user.id for admin in admins]
 
-        # Faqat oddiy foydalanuvchi va link bo'lsa
-        if message.from_user.id not in admin_ids and re.search(LINK_REGEX, message.text, re.IGNORECASE):
+        user_id = message.from_user.id
+        is_admin = user_id in admin_ids
+
+        # LINK bo‘lsa va foydalanuvchi admin bo‘lmasa
+        if not is_admin and re.search(LINK_REGEX, message.text, re.IGNORECASE):
             bot.delete_message(message.chat.id, message.message_id)
 
-            user = (
-                f"@{message.from_user.username}"
-                if message.from_user.username
-                else message.from_user.first_name
-            )
+            # Faqat oddiy foydalanuvchiga ogohlantirish yuboriladi
+            if not message.from_user.is_bot:
+                user = (
+                    f"@{message.from_user.username}"
+                    if message.from_user.username
+                    else message.from_user.first_name
+                )
 
-            warning = bot.send_message(
-                message.chat.id,
-                f"⚠️ {user}, iltimos reklama tarqatmang!"
-            )
+                warning = bot.send_message(
+                    message.chat.id,
+                    f"⚠️ {user}, iltimos reklama tarqatmang!"
+                )
 
-            def delete_warning():
-                time.sleep(10)
-                try:
-                    bot.delete_message(message.chat.id, warning.message_id)
-                except:
-                    pass
+                def delete_warning():
+                    time.sleep(10)
+                    try:
+                        bot.delete_message(message.chat.id, warning.message_id)
+                    except:
+                        pass
 
-            threading.Thread(target=delete_warning).start()
+                threading.Thread(target=delete_warning).start()
 
     except Exception as e:
         print(f"Xatolik: {e}")
+
 
 
 # Webhook sozlash va serverni ishga tushirish
