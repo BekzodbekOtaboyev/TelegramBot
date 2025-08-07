@@ -2,51 +2,39 @@ import json
 import os
 from telebot import TeleBot
 
-# Tokenni olish
 API_TOKEN = os.getenv("BOT_TOKEN")
 bot = TeleBot(API_TOKEN)
 
-# Foydalanuvchilar fayli
 USERS_FILE = "users.json"
 
-# Har bir foydalanuvchining ID sini saqlash
+# Foydalanuvchini faylga yozish
 def save_user(user_id):
     try:
-        with open(USERS_FILE, "r") as file:
-            users = json.load(file)
+        with open(USERS_FILE, "r") as f:
+            users = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         users = []
 
     if user_id not in users:
         users.append(user_id)
-        with open(USERS_FILE, "w") as file:
-            json.dump(users, file)
+        with open(USERS_FILE, "w") as f:
+            json.dump(users, f)
 
 # /start komandasi
-@bot.message_handler(commands=["start"])
-def send_welcome(message):
+@bot.message_handler(commands=['start'])
+def start_handler(message):
     user_id = message.chat.id
     save_user(user_id)
+    bot.send_message(user_id, "👋 Salom! Botga xush kelibsiz.")
 
-    bot.send_message(user_id, "👋 Salom! Botimizga xush kelibsiz.")
-
-# Barcha foydalanuvchilarga bir martalik habar yuborish
-def send_broadcast():
-    with open("users.txt", "r") as file:
-        users = set(file.read().splitlines())  # set orqali dublikat yo'qoladi
-    for user_id in users:
-        try:
-            bot.send_message(user_id, "📢 Bot administratori tomonidan xatoliklar to‘g‘irlandi.\n"
-                                      "Noqulayliklar uchun uzr so‘raymiz!\n"
-                                      "Botdan yana foydalanishingiz mumkin ✅")
-        except Exception as e:
-            print(f"Xatolik: {e}")
-
+# Broadcasting funksiyasi
+def send_broadcast_message():
     try:
-        with open(USERS_FILE, "r") as file:
-            users = json.load(file)
+        with open(USERS_FILE, "r") as f:
+            users = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
-        users = []
+        print("Hech qanday foydalanuvchi topilmadi.")
+        return
 
     for user_id in users:
         try:
@@ -56,9 +44,7 @@ def send_broadcast():
                 "Botdan yana foydalanishingiz mumkin ✅"
             )
         except Exception as e:
-            print(f"Xatolik foydalanuvchi {user_id} ga yuborishda: {e}")
+            print(f"❌ Xatolik foydalanuvchi {user_id} ga yuborishda: {e}")
 
-# Faqat sizcha: dastur ishga tushganda bu xabar yuboriladi
 if __name__ == "__main__":
-    send_broadcast()  # Bu faqat 1 marta ishga tushganda yuboradi
-    bot.polling()
+    send_broadcast_message()  # faqat 1 marta ishlaydi
