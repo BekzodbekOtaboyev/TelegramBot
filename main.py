@@ -32,6 +32,16 @@ def send_welcome(message):
 
 # Barcha foydalanuvchilarga bir martalik habar yuborish
 def send_broadcast():
+    with open("users.txt", "r") as file:
+        users = set(file.read().splitlines())  # set orqali dublikat yo'qoladi
+    for user_id in users:
+        try:
+            bot.send_message(user_id, "📢 Bot administratori tomonidan xatoliklar to‘g‘irlandi.\n"
+                                      "Noqulayliklar uchun uzr so‘raymiz!\n"
+                                      "Botdan yana foydalanishingiz mumkin ✅")
+        except Exception as e:
+            print(f"Xatolik: {e}")
+
     try:
         with open(USERS_FILE, "r") as file:
             users = json.load(file)
