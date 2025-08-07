@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-pytelegrambotapi
-flask
-=======
-Flask
-python-dotenv
 pyTelegramBotAPI
->>>>>>> 39efcd59eb75096b5f8782b0215a5c7d95900e31
+flask
+python-dotenv
