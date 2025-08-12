@@ -32,7 +32,7 @@ def start(message):
     bot_link = "https://t.me/Bek_qoravulbot?startgroup=true"
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("➕ Botni guruhga qo‘shish", url=bot_link))
-    bot.send_message(message.chat.id, "👋 Assalomu alaykum! Botni guruhga qo‘shib admin qiling:", reply_markup=markup)
+    bot.send_message(message.chat.id, "🤖 Assalomu alaykum! Reklama tozalovchi bot aktiv ishlamoqda Uni gunuhingizga qo'shing va *admin* qiling!", reply_markup=markup)
 
 @bot.message_handler(content_types=['text'])
 def spam_filter(message):
