@@ -31,7 +31,7 @@ def start(message):
     bot_link = "https://t.me/Bek_qoravulbot?startgroup=true"
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("➕ Botni guruhga qo‘shish", url=bot_link))
-    bot.send_message(message.chat.id, "👋 Assalomu alaykum! Botni guruhga qo‘shib foydalaning:", reply_markup=markup)
+    bot.send_message(message.chat.id, "👋 Assalomu alaykum! Botni guruhga qo‘shib admin qiling:", reply_markup=markup)
 
 @bot.message_handler(content_types=['text'])
 def spam_filter(message):
@@ -87,5 +87,15 @@ def keep_alive():
     t = threading.Thread(target=run)
     t.start()
 
+
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # render.yaml ichida WEBHOOK_URL bor
+
+def setup_webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url=WEBHOOK_URL)
+    print(f"✅ Webhook o‘rnatildi: {WEBHOOK_URL}")
+
+
 keep_alive()
 print("Bot ishga tushdi.")
+
