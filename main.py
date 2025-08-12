@@ -63,7 +63,7 @@ def spam_filter(message):
             msg1 = bot.send_message(message.chat.id, f"Hurmatli @{message.from_user.username} reklama tarqatmang!")
             msg2 = bot.send_message(
                 message.chat.id,
-                "📢 Meni guruhingizga qo‘shing va admin qiling — men reklama yubormay, aksincha ularni tozalayman!"
+                "📢 Meni guruhingizga qo‘shing va admin qiling — men reklama yubormay, aksincha ularni tozalayman!✅ ||(Xabar 10 soniyadan keyin avto o'chiriladi😉)||"
             )
             threading.Thread(target=delete_after_delay, args=(msg1.chat.id, msg1.message_id, 10)).start()
             threading.Thread(target=delete_after_delay, args=(msg2.chat.id, msg2.message_id, 10)).start()
