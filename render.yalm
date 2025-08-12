@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: Reklama-tozalovchi
+    name: reklama-tozalovchi
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python main.py
+    startCommand: gunicorn main:app
     envVars:
       - key: BOT_TOKEN
         sync: false

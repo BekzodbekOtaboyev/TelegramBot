@@ -7,6 +7,8 @@ import os
 import re
 
 API_TOKEN = os.getenv("BOT_TOKEN")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # render.yaml yoki .env ichida
+
 bot = telebot.TeleBot(API_TOKEN)
 app = Flask(__name__)
 
@@ -20,10 +22,9 @@ def delete_after_delay(chat_id, message_id, delay=5):
         print("Xatolik:", e)
 
 def reklama_bormi(matn):
-    """Ko‘rinmas reklamalarni ham aniqlash"""
     if not matn:
         return False
-    matn_pok = re.sub(r"[\u200B-\u200D\uFEFF\s]+", "", matn.lower())  # bo'sh joy va ko‘rinmas belgilarni olib tashlash
+    matn_pok = re.sub(r"[\u200B-\u200D\uFEFF\s]+", "", matn.lower())
     return any(kalit in matn_pok for kalit in SPAM_KALITLAR)
 
 @bot.message_handler(commands=['start'])
@@ -48,20 +49,18 @@ def spam_filter(message):
         bot_adminmi = any(admin.user.id == bot.get_me().id for admin in adminlar)
 
         if foydalanuvchi_adminmi:
-            return  # foydalanuvchi admin bo‘lsa reklama o‘chirilmadi
+            return
 
         if bot_adminmi:
-            # Bot admin bo'lsa reklama tozalash
             bot.delete_message(message.chat.id, message.message_id)
             msg1 = bot.send_message(message.chat.id, "❌ Reklama o‘chirildi.")
             threading.Thread(target=delete_after_delay, args=(msg1.chat.id, msg1.message_id)).start()
-            ogohlantirish = f"Hurmatli @{message.from_user.username}, iltimos reklama tarqatmang!" if message.from_user.username else "Iltimos reklama tarqatmang!"
+            ogohlantirish = f"Hurmatli @{message.from_user.username}, iltimos reklama yubormang!" if message.from_user.username else "Iltimos reklama tarqatmang!"
             msg2 = bot.send_message(message.chat.id, ogohlantirish)
             threading.Thread(target=delete_after_delay, args=(msg2.chat.id, msg2.message_id)).start()
         else:
-            # Bot admin emas bo‘lsa reklama o‘chirib bo‘lmaydi, faqat ogohlantirish
             foydalanuvchi_ismi = f"@{message.from_user.username}" if message.from_user.username else message.from_user.first_name
-            msg1 = bot.send_message(message.chat.id, f"Hurmatli {foydalanuvchi_ismi}, reklama tarqatmang!")
+            msg1 = bot.send_message(message.chat.id, f"Hurmatli @{message.from_user.username} reklama tarqatmang!")
             msg2 = bot.send_message(
                 message.chat.id,
                 "📢 Meni guruhingizga qo‘shing va admin qiling — men reklama yubormay, aksincha ularni tozalayman!"
@@ -80,22 +79,11 @@ def webhook():
         return '', 200
     return 'Bot ishlayapti!', 200
 
-def run():
-    app.run(host='0.0.0.0', port=8080)
-
-def keep_alive():
-    t = threading.Thread(target=run)
-    t.start()
-
-
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # render.yaml ichida WEBHOOK_URL bor
-
 def setup_webhook():
     bot.remove_webhook()
     bot.set_webhook(url=WEBHOOK_URL)
     print(f"✅ Webhook o‘rnatildi: {WEBHOOK_URL}")
 
-
-keep_alive()
-print("Bot ishga tushdi.")
-
+if __name__ == '__main__':
+    setup_webhook()
+    app.run(host='0.0.0.0', port=8080)
