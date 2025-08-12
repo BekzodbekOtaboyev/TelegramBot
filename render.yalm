@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: telegram-antispam-bot
+    name: Reklama-tozalovchi
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python antispam_bot.py
+    startCommand: python main.py
     envVars:
       - key: BOT_TOKEN
         sync: false
