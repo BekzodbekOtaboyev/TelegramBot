@@ -47,10 +47,31 @@ def spam_filter(message):
         adminlar = bot.get_chat_administrators(message.chat.id)
         foydalanuvchi_adminmi = any(admin.user.id == message.from_user.id for admin in adminlar)
 
-        # 🔹 Admin yozsa, reklama o‘chirilmasin
+        # 🔹 Agar foydalanuvchi admin bo‘lsa, reklama o‘chirilmaydi
         if foydalanuvchi_adminmi:
-            return
+            return  
+
         bot_adminmi = any(admin.user.id == bot.get_me().id for admin in adminlar)
+
+        if bot_adminmi:
+            # Reklama o‘chirish
+            bot.delete_message(message.chat.id, message.message_id)
+            msg1 = bot.send_message(message.chat.id, "❌ Reklama o‘chirildi.")
+            threading.Thread(target=delete_after_delay, args=(msg1.chat.id, msg1.message_id)).start()
+
+            # Foydalanuvchini 30 soniya yozishdan cheklash
+            until_time = int(time.time()) + 40
+            try:
+                bot.restrict_chat_member(
+                    chat_id=message.chat.id,
+                    user_id=message.from_user.id,
+                    until_date=until_time,
+                    permissions=telebot.types.ChatPermissions(can_send_messages=False)
+                )
+                cheklov_msg = bot.send_message(message.chat.id, f"🚫 @{message.from_user.username} Sizga vaqtincha yozishni cheklayman!")
+                threading.Thread(target=delete_after_delay, args=(cheklov_msg.chat.id, cheklov_msg.message_id, 10)).start()
+            except Exception as e:
+                print("Cheklashda xatolik:", e)
         
 
         if bot_adminmi:
