@@ -48,6 +48,7 @@ def spam_filter(message):
         foydalanuvchi_adminmi = any(admin.user.id == message.from_user.id for admin in adminlar)
         bot_adminmi = any(admin.user.id == bot.get_me().id for admin in adminlar)
 
+        # 🔹 Admin yozsa, reklama o‘chirilmasin
         if foydalanuvchi_adminmi:
             return
 
