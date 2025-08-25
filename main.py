@@ -46,11 +46,12 @@ def spam_filter(message):
     try:
         adminlar = bot.get_chat_administrators(message.chat.id)
         foydalanuvchi_adminmi = any(admin.user.id == message.from_user.id for admin in adminlar)
-        bot_adminmi = any(admin.user.id == bot.get_me().id for admin in adminlar)
 
         # 🔹 Admin yozsa, reklama o‘chirilmasin
         if foydalanuvchi_adminmi:
             return
+        bot_adminmi = any(admin.user.id == bot.get_me().id for admin in adminlar)
+        
 
         if bot_adminmi:
             bot.delete_message(message.chat.id, message.message_id)
