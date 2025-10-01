@@ -32,7 +32,7 @@ def start(message):
     bot_link = "https://t.me/Bek_qoravulbot?startgroup=true"
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("➕ Botni guruhga qo‘shish", url=bot_link))
-    bot.send_message(message.chat.id, "🤖 Assalomu alaykum! Reklama tozalovchi bot aktiv ishlamoqda Uni gunuhingizga qo'shing va *admin* qiling!", reply_markup=markup)
+    bot.send_message(message.chat.id, "🤖 Assalomu alaykum! Reklama tozalovchi bot aktiv ishlamoqda Uni gunuhingizga qo'shing va *admin qiling!", reply_markup=markup)
 
 @bot.message_handler(content_types=['text'])
 def spam_filter(message):
@@ -78,9 +78,9 @@ def spam_filter(message):
             bot.delete_message(message.chat.id, message.message_id)
             msg1 = bot.send_message(message.chat.id, "❌ Reklama o‘chirildi.")
             threading.Thread(target=delete_after_delay, args=(msg1.chat.id, msg1.message_id)).start()
-            ogohlantirish = f"Hurmatli @{message.from_user.username}, iltimos reklama yubormang!" if message.from_user.username else "Iltimos reklama tarqatmang!"
+            ogohlantirish = f"Hurmatli @{message.from_user.username}, iltimos reklama yubormang! (Xabar 10 soniyadan keyin avto o'chiriladi😉)" if message.from_user.username else "Iltimos reklama tarqatmang!"
             msg2 = bot.send_message(message.chat.id, ogohlantirish)
-            threading.Thread(target=delete_after_delay, args=(msg2.chat.id, msg2.message_id)).start()
+            threading.Thread(target=delete_after_delay, args=(msg2.chat.id, msg2.message_id, 10)).start()
         else:
             foydalanuvchi_ismi = f"@{message.from_user.username}" if message.from_user.username else message.from_user.first_name
             msg1 = bot.send_message(message.chat.id, f"Hurmatli @{message.from_user.username} reklama tarqatmang!")
