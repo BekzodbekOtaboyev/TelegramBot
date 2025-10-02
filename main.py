@@ -12,7 +12,7 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # render.yaml yoki .env ichida
 bot = telebot.TeleBot(API_TOKEN)
 app = Flask(__name__)
 
-SPAM_KALITLAR = ["http", "https", "t.me", "@", "sotib oling"]
+SPAM_KALITLAR = ["http", "https", "t.me", "@", "sotib oling" ".uz", ".ru", ".org" , ".com" , ".net" ]
 
 def delete_after_delay(chat_id, message_id, delay=5):
     time.sleep(delay)
@@ -68,7 +68,7 @@ def spam_filter(message):
                     until_date=until_time,
                     permissions=telebot.types.ChatPermissions(can_send_messages=False)
                 )
-                cheklov_msg = bot.send_message(message.chat.id, f"🚫 @{message.from_user.username} Sizga vaqtincha yozishni cheklayman!")
+                cheklov_msg = bot.send_message(message.chat.id, f"🚫 @{message.from_user.username} Yozish cheklandi reklama yubormang!")
                 threading.Thread(target=delete_after_delay, args=(cheklov_msg.chat.id, cheklov_msg.message_id, 10)).start()
             except Exception as e:
                 print("Cheklashda xatolik:", e)
@@ -78,7 +78,7 @@ def spam_filter(message):
             bot.delete_message(message.chat.id, message.message_id)
             msg1 = bot.send_message(message.chat.id, "❌ Reklama o‘chirildi.")
             threading.Thread(target=delete_after_delay, args=(msg1.chat.id, msg1.message_id)).start()
-            ogohlantirish = f"Hurmatli @{message.from_user.username}, iltimos reklama yubormang! (Xabar 10 soniyadan keyin avto o'chiriladi😉)" if message.from_user.username else "Iltimos reklama tarqatmang!"
+            ogohlantirish = f"Hurmatli @{message.from_user.username}, iltimos reklama yubormang! Xabar 10 soniyadan keyin avto o'chiriladi😉" if message.from_user.username else "Iltimos reklama tarqatmang!"
             msg2 = bot.send_message(message.chat.id, ogohlantirish)
             threading.Thread(target=delete_after_delay, args=(msg2.chat.id, msg2.message_id, 10)).start()
         else:
@@ -86,7 +86,7 @@ def spam_filter(message):
             msg1 = bot.send_message(message.chat.id, f"Hurmatli @{message.from_user.username} reklama tarqatmang!")
             msg2 = bot.send_message(
                 message.chat.id,
-                "📢 Meni guruhingizga qo‘shing va admin qiling — men reklama yubormay, aksincha ularni tozalayman!✅ ||(Xabar 10 soniyadan keyin avto o'chiriladi😉)||"
+                "📢 Meni guruhingizga qo‘shing va admin qiling — men reklama yubormay, aksincha ularni tozalayman!✅ (Xabar 10 soniyadan keyin avto o'chiriladi😉)"
             )
             threading.Thread(target=delete_after_delay, args=(msg1.chat.id, msg1.message_id, 10)).start()
             threading.Thread(target=delete_after_delay, args=(msg2.chat.id, msg2.message_id, 10)).start()
